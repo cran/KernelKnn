@@ -14,7 +14,9 @@
 // [[Rcpp::export]]
 Rcpp::List knn_index_dist_rcpp(arma::mat& MATRIX, arma::mat& TEST_DATA, int k, std::string method, int threads, double eps = 1.0e-6) {
 
+#ifdef _OPENMP
   omp_set_num_threads(threads);
+#endif
 
   if (TEST_DATA.is_empty()) {
 

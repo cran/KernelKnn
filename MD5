@@ -1,4 +1,4 @@
-794bd120ecc900f57e245869eb9ac872 *DESCRIPTION
+2bbe4cb6fc303a88d232fd1203ba6343 *DESCRIPTION
 c9c69a326502c31a65128654c3c08cb5 *LICENSE
 ce3b99b85036b62a72400aea0b32671c *NAMESPACE
 dad2caebc2734890f8f984f970036f9f *NEWS.md
@@ -38,7 +38,7 @@ e962827076d6320cf88574d84d64cf89 *man/regr_folds.Rd
 c126ac2546c904befca8c772d3d60929 *src/Makevars
 779d70d4809a9284c7def86d5f6f4e28 *src/Makevars.win
 fccd1403b72137368f365fa44c58e031 *src/RcppExports.cpp
-0789b71148ea332df0b865f7695ede20 *src/distance_metrics.cpp
+aae78349cd30f9153648e092586f4a9d *src/distance_metrics.cpp
 f2a4759453a7727a8a56130d8e70f854 *tests/testthat.R
 33626b73c5deb4ee53285523e5c0a842 *tests/testthat/test-distance_metrics.R
 b429524d9030fc0b588694072dca008b *tests/testthat/test-kernelknn.R
