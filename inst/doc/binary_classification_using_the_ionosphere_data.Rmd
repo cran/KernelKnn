@@ -147,7 +147,7 @@ I employed my RandomSearchR package to find the optimal parameters for the Kerne
 
 ## The KernelKnnCV function
  
-I'll use the *KernelKnnCV* function to calculate the mean-squared-error using 5-fold cross-validation for the previous mentioned parameter pairs,
+I'll use the *KernelKnnCV* function to calculate the accuracy using 5-fold cross-validation for the previous mentioned parameter pairs,
 
 
 ```{r, eval=T, warning = FALSE, message = FALSE, results = 'hide'}

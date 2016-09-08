@@ -84,7 +84,7 @@
 #  
 #  library(OpenImageR)
 #  
-#  hog = HOG_apply(X, cells = 6, orientations = 9, height = 28, width = 28, threads = 6)
+#  hog = HOG_apply(X, cells = 6, orientations = 9, rows = 28, columns = 28, threads = 6)
 #  
 #  ##
 #  ## time to complete : 1.802997 secs
@@ -103,7 +103,7 @@
 #                    threads = 6, Levels = sort(unique(y)))
 #  
 #  
-#  str(fit_hog)
+#  #str(fit_hog)
 #  
 
 ## ---- eval = F, cache = F------------------------------------------------
@@ -192,9 +192,9 @@
 
 ## ---- eval = F, cache = T------------------------------------------------
 #  
-#  hog = HOG_apply(X, cells = 6, orientations = 9, height = 32,
+#  hog = HOG_apply(X, cells = 6, orientations = 9, rows = 32,
 #  
-#                  width = 32, threads = 6)
+#                  columns = 32, threads = 6)
 #  
 #  ##
 #  ## time to complete : 3.394621 secs
