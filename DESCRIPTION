@@ -1,8 +1,8 @@
 Package: KernelKnn
 Type: Package
 Title: Kernel k Nearest Neighbors
-Version: 1.0.3
-Date: 2016-12-08
+Version: 1.0.4
+Date: 2017-02-10
 Author: Lampros Mouselimis <mouselimislampros@gmail.com>
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
 BugReports: https://github.com/mlampros/KernelKnn/issues
@@ -17,6 +17,6 @@ Suggests: testthat, covr, knitr, rmarkdown, irlba
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: yes
-Packaged: 2016-12-07 10:41:50 UTC; lampros
+Packaged: 2017-02-10 19:51:01 UTC; lampros
 Repository: CRAN
-Date/Publication: 2016-12-07 15:54:13
+Date/Publication: 2017-02-10 22:56:52

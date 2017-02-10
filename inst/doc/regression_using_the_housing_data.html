@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2016-12-07" />
+<meta name="date" content="2017-02-10" />
 
 <title>Regression using the Housing data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Regression using the Housing data</h1>
 <h4 class="author"><em>Lampros Mouselimis</em></h4>
-<h4 class="date"><em>2016-12-07</em></h4>
+<h4 class="date"><em>2017-02-10</em></h4>
 
 
 
@@ -151,7 +151,7 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(tmp_bst[s
                            
                            <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> F)
 <span class="kw">str</span>(preds_TEST_biw)</code></pre></div>
-<pre><code>##  num [1:126] 22.7 35.1 22.1 20.8 19.3 ...</code></pre>
+<pre><code>##  num [1:126] 22.8 15.3 14.3 25.2 16.2 ...</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm_kernel =<span class="st"> </span>function(W) {
   
@@ -169,7 +169,7 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                             
                             <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> F)
 <span class="kw">str</span>(preds_TEST_norm)</code></pre></div>
-<pre><code>##  num [1:126] 23.6 31.1 22.3 22.1 20.3 ...</code></pre>
+<pre><code>##  num [1:126] 22.6 18.9 14.4 26.3 20.8 ...</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
@@ -205,9 +205,9 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair1)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 3
-##   ..$ : num [1:168] 24.1 32.4 17.6 16.6 19.4 ...
-##   ..$ : num [1:169] 30 21.8 21.5 20.5 22.6 ...
-##   ..$ : num [1:169] 23.3 29.7 30.8 20.4 22.6 ...
+##   ..$ : num [1:168] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##   ..$ : num [1:169] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##   ..$ : num [1:169] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
 ##  $ folds:List of 3
 ##   ..$ fold_1: int [1:168] 2 5 8 9 14 23 24 29 34 35 ...
 ##   ..$ fold_2: int [1:169] 6 12 13 16 17 19 20 22 30 36 ...
@@ -224,9 +224,9 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                                           
                                           fit_cv_pair1$preds[[x]])))
 mse_pair1</code></pre></div>
-<pre><code>## [1] 18.17392 18.29160 11.01078</code></pre>
+<pre><code>## [1] NaN NaN NaN</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'mse for params_pair1 is :'</span>, <span class="kw">mean</span>(mse_pair1), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
-<pre><code>## mse for params_pair1 is : 15.82543</code></pre>
+<pre><code>## mse for params_pair1 is : NaN</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mse_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_cv_pair2$preds), 
                           
                           function(x) <span class="kw">mse</span>(y[fit_cv_pair2$folds[[x]]], 
@@ -272,9 +272,9 @@ mse_pair2</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair1)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 3
-##   ..$ : num [1:168] 24.3 32.4 17.8 17.1 19.5 ...
-##   ..$ : num [1:169] 28.6 21.5 21.9 20.4 22.2 ...
-##   ..$ : num [1:169] 23.2 27.6 31.1 20.7 22.4 ...
+##   ..$ : num [1:168] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##   ..$ : num [1:169] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##   ..$ : num [1:169] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
 ##  $ folds:List of 3
 ##   ..$ fold_1: int [1:168] 2 5 8 9 14 23 24 29 34 35 ...
 ##   ..$ fold_2: int [1:169] 6 12 13 16 17 19 20 22 30 36 ...
@@ -287,9 +287,9 @@ mse_pair2</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair2)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 3
-##   ..$ : num [1:168] 24.2 32.5 17.8 17.1 19.4 ...
-##   ..$ : num [1:169] 28.9 21.7 21.8 20.4 22.1 ...
-##   ..$ : num [1:169] 23.3 27.7 31.2 20.6 22.4 ...
+##   ..$ : num [1:168] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##   ..$ : num [1:169] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
+##   ..$ : num [1:169] NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN ...
 ##  $ folds:List of 3
 ##   ..$ fold_1: int [1:168] 2 5 8 9 14 23 24 29 34 35 ...
 ##   ..$ fold_2: int [1:169] 6 12 13 16 17 19 20 22 30 36 ...
@@ -301,18 +301,18 @@ mse_pair2</code></pre></div>
                                           
                                           fit_cv_pair1$preds[[x]])))
 mse_pair1</code></pre></div>
-<pre><code>## [1] 18.73885 18.64990 11.21641</code></pre>
+<pre><code>## [1] NaN NaN NaN</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'mse for params_pair1 is :'</span>, <span class="kw">mean</span>(mse_pair1), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
-<pre><code>## mse for params_pair1 is : 16.20172</code></pre>
+<pre><code>## mse for params_pair1 is : NaN</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mse_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_cv_pair2$preds), 
                           
                           function(x) <span class="kw">mse</span>(y[fit_cv_pair2$folds[[x]]], 
                                           
                                           fit_cv_pair2$preds[[x]])))
 mse_pair2</code></pre></div>
-<pre><code>## [1] 19.12602 18.63044 11.21680</code></pre>
+<pre><code>## [1] NaN NaN NaN</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'mse for params_pair2 is :'</span>, <span class="kw">mean</span>(mse_pair2), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
-<pre><code>## mse for params_pair2 is : 16.32442</code></pre>
+<pre><code>## mse for params_pair2 is : NaN</code></pre>
 <p><br></p>
 </div>
 
