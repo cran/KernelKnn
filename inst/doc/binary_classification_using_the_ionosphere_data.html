@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2017-02-10" />
+<meta name="date" content="2017-02-21" />
 
 <title>binary classification using the ionosphere data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">binary classification using the ionosphere data</h1>
 <h4 class="author"><em>Lampros Mouselimis</em></h4>
-<h4 class="date"><em>2017-02-10</em></h4>
+<h4 class="date"><em>2017-02-21</em></h4>
 
 
 
@@ -104,9 +104,9 @@ y =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>:
 spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) *<span class="st"> </span><span class="fl">0.75</span>))
 spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span>:<span class="kw">length</span>(y), spl_train)
 <span class="kw">str</span>(spl_train)</code></pre></div>
-<pre><code>##  int [1:263] 38 203 136 316 2 108 121 226 171 320 ...</code></pre>
+<pre><code>##  int [1:263] 185 180 188 13 162 126 301 262 98 33 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(spl_test)</code></pre></div>
-<pre><code>##  int [1:88] 1 6 7 10 15 16 18 23 24 26 ...</code></pre>
+<pre><code>##  int [1:88] 4 16 18 21 28 36 37 39 41 45 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># evaluation metric</span>
 
 acc =<span class="st"> </span>function (y_true, preds) {
@@ -131,11 +131,11 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
 <span class="kw">head</span>(preds_TEST)</code></pre></div>
 <pre><code>##      class_1 class_2
 ## [1,]     0.2     0.8
-## [2,]     0.8     0.2
-## [3,]     0.0     1.0
-## [4,]     0.8     0.2
-## [5,]     0.0     1.0
-## [6,]     0.6     0.4</code></pre>
+## [2,]     0.6     0.4
+## [3,]     1.0     0.0
+## [4,]     0.0     1.0
+## [5,]     1.0     0.0
+## [6,]     0.0     1.0</code></pre>
 <p><br> There are two ways to use a kernel in the KernelKnn function. The <strong>first option</strong> is to choose one of the existing kernels (<em>uniform</em>, <em>triangular</em>, <em>epanechnikov</em>, <em>biweight</em>, <em>triweight</em>, <em>tricube</em>, <em>gaussian</em>, <em>cosine</em>, <em>logistic</em>, <em>silverman</em>, <em>inverse</em>, <em>gaussianSimple</em>, <em>exponential</em>). Here, I use the <em>canberra</em> metric and the <em>tricube</em> kernel because they give optimal results (according to my RandomSearchR package),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds_TEST_tric =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">10</span> , 
                             
@@ -144,12 +144,12 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_tric)</code></pre></div>
 <pre><code>##           [,1]       [,2]
-## [1,] 0.0000000 1.00000000
-## [2,] 0.7857101 0.21428995
-## [3,] 0.0000000 1.00000000
-## [4,] 0.8350618 0.16493815
-## [5,] 0.1763196 0.82368041
-## [6,] 0.9538039 0.04619605</code></pre>
+## [1,] 0.8945023 0.10549770
+## [2,] 0.9674378 0.03256217
+## [3,] 0.9698449 0.03015507
+## [4,] 0.0000000 1.00000000
+## [5,] 1.0000000 0.00000000
+## [6,] 0.7507592 0.24924076</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm_kernel =<span class="st"> </span>function(W) {
   
@@ -167,13 +167,13 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_norm)</code></pre></div>
-<pre><code>##           [,1]      [,2]
-## [1,] 0.0000000 1.0000000
-## [2,] 0.8765587 0.1234413
-## [3,] 0.0000000 1.0000000
-## [4,] 0.8821567 0.1178433
-## [5,] 0.1159831 0.8840169
-## [6,] 0.8146508 0.1853492</code></pre>
+<pre><code>##           [,1]       [,2]
+## [1,] 0.6524796 0.34752037
+## [2,] 0.8216815 0.17831849
+## [3,] 0.9049694 0.09503059
+## [4,] 0.0000000 1.00000000
+## [5,] 1.0000000 0.00000000
+## [6,] 0.6253810 0.37461902</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
