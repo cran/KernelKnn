@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2017-02-21" />
+<meta name="date" content="2017-10-30" />
 
 <title>Image classification of the MNIST and CIFAR-10 data using KernelKnn and HOG (histogram of oriented gradients)</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Image classification of the MNIST and CIFAR-10 data using KernelKnn and HOG (histogram of oriented gradients)</h1>
 <h4 class="author"><em>Lampros Mouselimis</em></h4>
-<h4 class="date"><em>2017-02-21</em></h4>
+<h4 class="date"><em>2017-10-30</em></h4>
 
 
 
@@ -93,14 +93,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 mnist &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">unz</span>(<span class="st">&quot;mnist.zip&quot;</span>, <span class="st">&quot;mnist.csv&quot;</span>), <span class="dt">nrows =</span> <span class="dv">70000</span>, <span class="dt">header =</span> T, 
                     
                     <span class="dt">quote =</span> <span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X =<span class="st"> </span>mnist[, -<span class="kw">ncol</span>(mnist)]
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X =<span class="st"> </span>mnist[, <span class="op">-</span><span class="kw">ncol</span>(mnist)]
 <span class="kw">dim</span>(X)
 
 ## [1] 70000   784
 
 <span class="co"># the KernelKnn function requires that the labels are numeric and start from 1 : Inf</span>
 
-y =<span class="st"> </span>mnist[, <span class="kw">ncol</span>(mnist)] +<span class="st"> </span><span class="dv">1</span>          
+y =<span class="st"> </span>mnist[, <span class="kw">ncol</span>(mnist)] <span class="op">+</span><span class="st"> </span><span class="dv">1</span>          
 <span class="kw">table</span>(y)
 
 ## y
@@ -139,7 +139,7 @@ y =<span class="st"> </span>mnist[, <span class="kw">ncol</span>(mnist)] +<span 
 
 svd_irlb =<span class="st"> </span><span class="kw">irlba</span>(<span class="kw">as.matrix</span>(X), <span class="dt">nv =</span> <span class="dv">40</span>, <span class="dt">nu =</span> <span class="dv">40</span>, <span class="dt">verbose =</span> F)            <span class="co"># irlba truncated svd</span>
 
-new_x =<span class="st"> </span><span class="kw">as.matrix</span>(X) %*%<span class="st"> </span>svd_irlb$v               <span class="co"># new_x using the 40 right singular vectors</span></code></pre></div>
+new_x =<span class="st"> </span><span class="kw">as.matrix</span>(X) <span class="op">%*%</span><span class="st"> </span>svd_irlb<span class="op">$</span>v               <span class="co"># new_x using the 40 right singular vectors</span></code></pre></div>
 <p><br></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(KernelKnn)
 
@@ -155,20 +155,20 @@ fit =<span class="st"> </span><span class="kw">KernelKnnCV</span>(<span class="k
 
 <span class="co"># evaluation metric</span>
 
-acc =<span class="st"> </span>function (y_true, preds) {
+acc =<span class="st"> </span><span class="cf">function</span> (y_true, preds) {
   
   out =<span class="st"> </span><span class="kw">table</span>(y_true, <span class="kw">max.col</span>(preds, <span class="dt">ties.method =</span> <span class="st">&quot;random&quot;</span>))
   
-  acc =<span class="st"> </span><span class="kw">sum</span>(<span class="kw">diag</span>(out))/<span class="kw">sum</span>(out)
+  acc =<span class="st"> </span><span class="kw">sum</span>(<span class="kw">diag</span>(out))<span class="op">/</span><span class="kw">sum</span>(out)
   
   acc
 }</code></pre></div>
 <p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit<span class="op">$</span>preds), 
                         
-                        function(x) <span class="kw">acc</span>(y[fit$folds[[x]]], 
+                        <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit<span class="op">$</span>folds[[x]]], 
                                         
-                                        fit$preds[[x]])))
+                                        fit<span class="op">$</span>preds[[x]])))
 acc_fit
 
 ## [1] 0.9742857 0.9749143 0.9761143 0.9741143
@@ -202,11 +202,11 @@ hog =<span class="st"> </span><span class="kw">HOG_apply</span>(X, <span class="
 
 <span class="co">#str(fit_hog)</span></code></pre></div>
 <p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit_hog =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_hog$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit_hog =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_hog<span class="op">$</span>preds), 
                             
-                            function(x) <span class="kw">acc</span>(y[fit_hog$folds[[x]]], 
+                            <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit_hog<span class="op">$</span>folds[[x]]], 
                                             
-                                            fit_hog$preds[[x]])))
+                                            fit_hog<span class="op">$</span>preds[[x]])))
 acc_fit_hog
 
 ## [1] 0.9833714 0.9840571 0.9846857 0.9838857
@@ -226,19 +226,19 @@ acc_fit_hog
 
 <span class="kw">system</span>(<span class="st">&quot;wget https://raw.githubusercontent.com/mlampros/DataSets/master/cifar_10.zip&quot;</span>)      
 
-cifar_10 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">unz</span>(<span class="st">&quot;cifar_10.zip&quot;</span>, <span class="st">&quot;cifar_10.csv&quot;</span>), <span class="dt">nrows =</span> <span class="dv">60000</span>, <span class="dt">header =</span> T, 
+cifar_<span class="dv">10</span> &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="kw">unz</span>(<span class="st">&quot;cifar_10.zip&quot;</span>, <span class="st">&quot;cifar_10.csv&quot;</span>), <span class="dt">nrows =</span> <span class="dv">60000</span>, <span class="dt">header =</span> T, 
                        
                        <span class="dt">quote =</span> <span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>)</code></pre></div>
 <div id="kernelknncv-using-truncated-svd-1" class="section level5">
 <h5>KernelKnnCV using truncated svd</h5>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X =<span class="st"> </span>cifar_10[, -<span class="kw">ncol</span>(cifar_10)]
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X =<span class="st"> </span>cifar_<span class="dv">10</span>[, <span class="op">-</span><span class="kw">ncol</span>(cifar_<span class="dv">10</span>)]
 <span class="kw">dim</span>(X)
 
 ## [1] 60000  1024
 
 <span class="co"># the KernelKnn function requires that the labels are numeric and start from 1 : Inf</span>
 
-y =<span class="st"> </span>cifar_10[, <span class="kw">ncol</span>(cifar_10)]         
+y =<span class="st"> </span>cifar_<span class="dv">10</span>[, <span class="kw">ncol</span>(cifar_<span class="dv">10</span>)]         
 <span class="kw">table</span>(y)
 
 ## y
@@ -272,7 +272,7 @@ y =<span class="st"> </span>cifar_10[, <span class="kw">ncol</span>(cifar_10)]
 </table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">svd_irlb =<span class="st"> </span><span class="kw">irlba</span>(<span class="kw">as.matrix</span>(X), <span class="dt">nv =</span> <span class="dv">40</span>, <span class="dt">nu =</span> <span class="dv">40</span>, <span class="dt">verbose =</span> F)            <span class="co"># irlba truncated svd</span>
 
-new_x =<span class="st"> </span><span class="kw">as.matrix</span>(X) %*%<span class="st"> </span>svd_irlb$v               <span class="co"># new_x using the 40 right singular vectors</span></code></pre></div>
+new_x =<span class="st"> </span><span class="kw">as.matrix</span>(X) <span class="op">%*%</span><span class="st"> </span>svd_irlb<span class="op">$</span>v               <span class="co"># new_x using the 40 right singular vectors</span></code></pre></div>
 <p><br></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">KernelKnnCV</span>(<span class="kw">as.matrix</span>(new_x), y, <span class="dt">k =</span> <span class="dv">8</span>, <span class="dt">folds =</span> <span class="dv">4</span>, <span class="dt">method =</span> <span class="st">'braycurtis'</span>,
                   
@@ -283,11 +283,11 @@ new_x =<span class="st"> </span><span class="kw">as.matrix</span>(X) %*%<span cl
 
 <span class="co"># str(fit)</span></code></pre></div>
 <p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit$preds),
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit<span class="op">$</span>preds),
                         
-                        function(x) <span class="kw">acc</span>(y[fit$folds[[x]]], 
+                        <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit<span class="op">$</span>folds[[x]]], 
                                         
-                                        fit$preds[[x]])))
+                                        fit<span class="op">$</span>preds[[x]])))
 acc_fit
 
 ## [1] 0.4080667 0.4097333 0.4040000 0.4102667
@@ -321,11 +321,11 @@ acc_fit
 
 <span class="co"># str(fit_hog)</span></code></pre></div>
 <p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit_hog =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_hog$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_fit_hog =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_hog<span class="op">$</span>preds), 
                             
-                            function(x) <span class="kw">acc</span>(y[fit_hog$folds[[x]]], 
+                            <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit_hog<span class="op">$</span>folds[[x]]], 
                                             
-                                            fit_hog$preds[[x]])))
+                                            fit_hog<span class="op">$</span>preds[[x]])))
 acc_fit_hog
 
 ## [1] 0.5807333 0.5884000 0.5777333 0.5861333
@@ -345,7 +345,7 @@ acc_fit_hog
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

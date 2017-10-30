@@ -94,7 +94,7 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 10 , folds = 5, method = 'canberra',
                            
                            weights_function = 'tricube', regression = F, 
                            
-                           Levels = unique(y), threads = 5)
+                           Levels = unique(y), threads = 5, seed_num = 5)
 
 ## ---- eval=T-------------------------------------------------------------
 str(fit_cv_pair1)
@@ -104,7 +104,7 @@ fit_cv_pair2 = KernelKnnCV(X, y, k = 9 , folds = 5,method = 'canberra',
                            
                            weights_function = 'epanechnikov', regression = F,
                            
-                           Levels = unique(y), threads = 5)
+                           Levels = unique(y), threads = 5, seed_num = 5)
 
 ## ---- eval=T-------------------------------------------------------------
 str(fit_cv_pair2)
@@ -140,7 +140,9 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 16, folds = 5, method = 'canberra',
                            
                            weights_function = 'biweight_triweight_gaussian_MULT', 
                            
-                           regression = F, Levels = unique(y), threads = 5)
+                           regression = F, Levels = unique(y), threads = 5, 
+                           
+                           seed_num = 5)
 
 ## ---- eval=T-------------------------------------------------------------
 str(fit_cv_pair1)
@@ -151,7 +153,9 @@ fit_cv_pair2 = KernelKnnCV(X, y, k = 5, folds = 5, method = 'canberra',
                            
                            weights_function = 'triangular_triweight_MULT', 
                            
-                           regression = F, Levels = unique(y), threads = 5)
+                           regression = F, Levels = unique(y), threads = 5,
+                           
+                           seed_num = 5)
 
 
 ## ---- eval=T-------------------------------------------------------------

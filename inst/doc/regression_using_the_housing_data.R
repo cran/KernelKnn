@@ -97,7 +97,9 @@ str(preds_TEST_norm)
 
 fit_cv_pair1 = KernelKnnCV(X, y, k = 9, folds = 3, method = 'mahalanobis', 
                            
-                           weights_function = 'triweight', regression = T, threads = 5)
+                           weights_function = 'triweight', regression = T, 
+                           
+                           threads = 5, seed_num = 3)
 
 ## ---- eval=T-------------------------------------------------------------
 str(fit_cv_pair1)
@@ -105,7 +107,9 @@ str(fit_cv_pair1)
 ## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
 fit_cv_pair2 = KernelKnnCV(X, y, k = 3, folds = 3, method = 'canberra',
                            
-                           weights_function = 'cosine', regression = T, threads = 5)
+                           weights_function = 'cosine', regression = T, 
+                           
+                           threads = 5, seed_num = 3)
 
 ## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
 str(fit_cv_pair2)
@@ -141,7 +145,7 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 19, folds = 3, method = 'mahalanobis',
                            
                            weights_function = 'triangular_triweight_MULT', 
                            
-                           regression = T, threads = 5)
+                           regression = T, threads = 5, seed_num = 3)
 
 ## ---- eval=T-------------------------------------------------------------
 str(fit_cv_pair1)
@@ -151,7 +155,7 @@ fit_cv_pair2 = KernelKnnCV(X, y, k = 18, folds = 3, method = 'mahalanobis',
                            
                            weights_function = 'biweight_triweight_gaussian_MULT', 
                            
-                           regression = T, threads = 5)
+                           regression = T, threads = 5, seed_num = 3)
 
 ## ---- eval=T-------------------------------------------------------------
 str(fit_cv_pair2)

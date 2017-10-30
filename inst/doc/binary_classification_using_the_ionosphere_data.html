@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2017-02-21" />
+<meta name="date" content="2017-10-30" />
 
 <title>binary classification using the ionosphere data</title>
 
@@ -70,14 +70,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">binary classification using the ionosphere data</h1>
 <h4 class="author"><em>Lampros Mouselimis</em></h4>
-<h4 class="date"><em>2017-02-21</em></h4>
+<h4 class="date"><em>2017-10-30</em></h4>
 
 
 
 <p>The following examples illustrate the functionality of the KernelKnn package for <strong>classification</strong> tasks. I’ll make use of the <em>ionosphere</em> data set,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(ionosphere, <span class="dt">package =</span> <span class="st">'KernelKnn'</span>)
 
-<span class="kw">apply</span>(ionosphere, <span class="dv">2</span>, function(x) <span class="kw">length</span>(<span class="kw">unique</span>(x)))</code></pre></div>
+<span class="kw">apply</span>(ionosphere, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">length</span>(<span class="kw">unique</span>(x)))</code></pre></div>
 <pre><code>##    V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12 
 ##     2     1   219   269   204   259   231   260   244   267   246   269 
 ##   V13   V14   V15   V16   V17   V18   V19   V20   V21   V22   V23   V24 
@@ -86,34 +86,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##   256   273   256   281   244   266   243   263   245   263     2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the second column will be removed as it has a single unique value</span>
 
-ionosphere =<span class="st"> </span>ionosphere[, -<span class="dv">2</span>]</code></pre></div>
+ionosphere =<span class="st"> </span>ionosphere[, <span class="op">-</span><span class="dv">2</span>]</code></pre></div>
 <p><br></p>
 <p>When using an algorithm where the ouput depends on distance calculation (as is the case in k-nearest-neighbors) it is recommended to first scale the data,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># recommended is to scale the data</span>
 
-X =<span class="st"> </span><span class="kw">scale</span>(ionosphere[, -<span class="kw">ncol</span>(ionosphere)])
+X =<span class="st"> </span><span class="kw">scale</span>(ionosphere[, <span class="op">-</span><span class="kw">ncol</span>(ionosphere)])
 y =<span class="st"> </span>ionosphere[, <span class="kw">ncol</span>(ionosphere)]</code></pre></div>
 <p><br></p>
 <p><strong>important note</strong> : In classification, both functions <em>KernelKnn</em> and <em>KernelKnnCV</em> accept a numeric vector as a response variable (here y) and the unique values of the labels should begin from 1. This is important otherwise the internal functions do not work. Furthermore, both functions (by default) return predictions in form of probabilities, which can be converted to labels by using either a threshold (if binary classification) or the maximum value of each column (if multiclass classification).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># labels should be numeric and begin from 1:Inf</span>
 
-y =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>:<span class="kw">length</span>(<span class="kw">unique</span>(y)))[ <span class="kw">match</span>(ionosphere$class, <span class="kw">sort</span>(<span class="kw">unique</span>(ionosphere$class))) ]
+y =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">unique</span>(y)))[ <span class="kw">match</span>(ionosphere<span class="op">$</span>class, <span class="kw">sort</span>(<span class="kw">unique</span>(ionosphere<span class="op">$</span>class))) ]
 
 <span class="co"># random split of data in train and test</span>
 
-spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:<span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) *<span class="st"> </span><span class="fl">0.75</span>))
-spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span>:<span class="kw">length</span>(y), spl_train)
+spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) <span class="op">*</span><span class="st"> </span><span class="fl">0.75</span>))
+spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), spl_train)
 <span class="kw">str</span>(spl_train)</code></pre></div>
-<pre><code>##  int [1:263] 185 180 188 13 162 126 301 262 98 33 ...</code></pre>
+<pre><code>##  int [1:263] 315 125 51 303 217 81 118 25 113 253 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(spl_test)</code></pre></div>
-<pre><code>##  int [1:88] 4 16 18 21 28 36 37 39 41 45 ...</code></pre>
+<pre><code>##  int [1:88] 1 10 15 27 31 34 35 42 44 50 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># evaluation metric</span>
 
-acc =<span class="st"> </span>function (y_true, preds) {
+acc =<span class="st"> </span><span class="cf">function</span> (y_true, preds) {
   
   out =<span class="st"> </span><span class="kw">table</span>(y_true, <span class="kw">max.col</span>(preds, <span class="dt">ties.method =</span> <span class="st">&quot;random&quot;</span>))
   
-  acc =<span class="st"> </span><span class="kw">sum</span>(<span class="kw">diag</span>(out))/<span class="kw">sum</span>(out)
+  acc =<span class="st"> </span><span class="kw">sum</span>(<span class="kw">diag</span>(out))<span class="op">/</span><span class="kw">sum</span>(out)
   
   acc
 }</code></pre></div>
@@ -131,11 +131,11 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
 <span class="kw">head</span>(preds_TEST)</code></pre></div>
 <pre><code>##      class_1 class_2
 ## [1,]     0.2     0.8
-## [2,]     0.6     0.4
-## [3,]     1.0     0.0
+## [2,]     0.8     0.2
+## [3,]     0.0     1.0
 ## [4,]     0.0     1.0
-## [5,]     1.0     0.0
-## [6,]     0.0     1.0</code></pre>
+## [5,]     0.0     1.0
+## [6,]     0.2     0.8</code></pre>
 <p><br> There are two ways to use a kernel in the KernelKnn function. The <strong>first option</strong> is to choose one of the existing kernels (<em>uniform</em>, <em>triangular</em>, <em>epanechnikov</em>, <em>biweight</em>, <em>triweight</em>, <em>tricube</em>, <em>gaussian</em>, <em>cosine</em>, <em>logistic</em>, <em>silverman</em>, <em>inverse</em>, <em>gaussianSimple</em>, <em>exponential</em>). Here, I use the <em>canberra</em> metric and the <em>tricube</em> kernel because they give optimal results (according to my RandomSearchR package),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds_TEST_tric =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">10</span> , 
                             
@@ -143,19 +143,19 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_tric)</code></pre></div>
-<pre><code>##           [,1]       [,2]
-## [1,] 0.8945023 0.10549770
-## [2,] 0.9674378 0.03256217
-## [3,] 0.9698449 0.03015507
-## [4,] 0.0000000 1.00000000
-## [5,] 1.0000000 0.00000000
-## [6,] 0.7507592 0.24924076</code></pre>
+<pre><code>##              [,1]      [,2]
+## [1,] 0.000000e+00 1.0000000
+## [2,] 8.270540e-01 0.1729460
+## [3,] 1.535476e-01 0.8464524
+## [4,] 5.794928e-18 1.0000000
+## [5,] 1.723728e-03 0.9982763
+## [6,] 6.788363e-03 0.9932116</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm_kernel =<span class="st"> </span>function(W) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm_kernel =<span class="st"> </span><span class="cf">function</span>(W) {
   
   W =<span class="st"> </span><span class="kw">dnorm</span>(W, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">1.0</span>)
   
-  W =<span class="st"> </span>W /<span class="st"> </span><span class="kw">rowSums</span>(W)
+  W =<span class="st"> </span>W <span class="op">/</span><span class="st"> </span><span class="kw">rowSums</span>(W)
   
   <span class="kw">return</span>(W)
 }
@@ -167,13 +167,13 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_norm)</code></pre></div>
-<pre><code>##           [,1]       [,2]
-## [1,] 0.6524796 0.34752037
-## [2,] 0.8216815 0.17831849
-## [3,] 0.9049694 0.09503059
-## [4,] 0.0000000 1.00000000
-## [5,] 1.0000000 0.00000000
-## [6,] 0.6253810 0.37461902</code></pre>
+<pre><code>##            [,1]      [,2]
+## [1,] 0.00000000 1.0000000
+## [2,] 0.88537760 0.1146224
+## [3,] 0.10899471 0.8910053
+## [4,] 0.07372239 0.9262776
+## [5,] 0.08074792 0.9192521
+## [6,] 0.08523607 0.9147639</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
@@ -207,7 +207,7 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                            
                            <span class="dt">weights_function =</span> <span class="st">'tricube'</span>, <span class="dt">regression =</span> F, 
                            
-                           <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>)</code></pre></div>
+                           <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair1)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 5
@@ -226,7 +226,7 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                            
                            <span class="dt">weights_function =</span> <span class="st">'epanechnikov'</span>, <span class="dt">regression =</span> F,
                            
-                           <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>)</code></pre></div>
+                           <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair2)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 5
@@ -243,20 +243,20 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
 ##   ..$ fold_5: int [1:70] 195 326 225 332 342 347 206 219 218 214 ...</code></pre>
 <p><br></p>
 <p>Each cross-validated object returns a list of length 2 ( the first sublist includes the predictions for each fold whereas the second gives the indices of the folds)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_cv_pair1$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair1<span class="op">$</span>preds), 
                           
-                          function(x) <span class="kw">acc</span>(y[fit_cv_pair1$folds[[x]]], 
+                          <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit_cv_pair1<span class="op">$</span>folds[[x]]], 
                                           
-                                          fit_cv_pair1$preds[[x]])))
+                                          fit_cv_pair1<span class="op">$</span>preds[[x]])))
 acc_pair1</code></pre></div>
 <pre><code>## [1] 0.9154930 0.9142857 0.9142857 0.9285714 0.9571429</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'accurcay for params_pair1 is :'</span>, <span class="kw">mean</span>(acc_pair1), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
 <pre><code>## accurcay for params_pair1 is : 0.9259557</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_cv_pair2$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair2<span class="op">$</span>preds), 
                           
-                          function(x) <span class="kw">acc</span>(y[fit_cv_pair2$folds[[x]]], 
+                          <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit_cv_pair2<span class="op">$</span>folds[[x]]], 
                                           
-                                          fit_cv_pair2$preds[[x]])))
+                                          fit_cv_pair2<span class="op">$</span>preds[[x]])))
 acc_pair2</code></pre></div>
 <pre><code>## [1] 0.9014085 0.9142857 0.9000000 0.9142857 0.9571429</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'accuracy for params_pair2 is :'</span>, <span class="kw">mean</span>(acc_pair2), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
@@ -293,7 +293,9 @@ acc_pair2</code></pre></div>
                            
                            <span class="dt">weights_function =</span> <span class="st">'biweight_triweight_gaussian_MULT'</span>, 
                            
-                           <span class="dt">regression =</span> F, <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>)</code></pre></div>
+                           <span class="dt">regression =</span> F, <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>, 
+                           
+                           <span class="dt">seed_num =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair1)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 5
@@ -312,7 +314,9 @@ acc_pair2</code></pre></div>
                            
                            <span class="dt">weights_function =</span> <span class="st">'triangular_triweight_MULT'</span>, 
                            
-                           <span class="dt">regression =</span> F, <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>)</code></pre></div>
+                           <span class="dt">regression =</span> F, <span class="dt">Levels =</span> <span class="kw">unique</span>(y), <span class="dt">threads =</span> <span class="dv">5</span>,
+                           
+                           <span class="dt">seed_num =</span> <span class="dv">5</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(fit_cv_pair2)</code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 5
@@ -328,20 +332,20 @@ acc_pair2</code></pre></div>
 ##   ..$ fold_4: int [1:70] 313 301 317 318 316 142 175 157 146 147 ...
 ##   ..$ fold_5: int [1:70] 195 326 225 332 342 347 206 219 218 214 ...</code></pre>
 <p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_cv_pair1$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair1<span class="op">$</span>preds), 
                           
-                          function(x) <span class="kw">acc</span>(y[fit_cv_pair1$folds[[x]]], 
+                          <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit_cv_pair1<span class="op">$</span>folds[[x]]], 
                                           
-                                          fit_cv_pair1$preds[[x]])))
+                                          fit_cv_pair1<span class="op">$</span>preds[[x]])))
 acc_pair1</code></pre></div>
 <pre><code>## [1] 0.9014085 0.9142857 0.9285714 0.9285714 0.9571429</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'accuracy for params_pair1 is :'</span>, <span class="kw">mean</span>(acc_pair1), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
 <pre><code>## accuracy for params_pair1 is : 0.925996</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span>:<span class="kw">length</span>(fit_cv_pair2$preds), 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acc_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair2<span class="op">$</span>preds), 
                           
-                          function(x) <span class="kw">acc</span>(y[fit_cv_pair2$folds[[x]]],
+                          <span class="cf">function</span>(x) <span class="kw">acc</span>(y[fit_cv_pair2<span class="op">$</span>folds[[x]]],
                                           
-                                          fit_cv_pair2$preds[[x]])))
+                                          fit_cv_pair2<span class="op">$</span>preds[[x]])))
 acc_pair2</code></pre></div>
 <pre><code>## [1] 0.9014085 0.9285714 0.9285714 0.9142857 0.9714286</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="st">'accuracy for params_pair2 is :'</span>, <span class="kw">mean</span>(acc_pair2), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre></div>
@@ -356,7 +360,7 @@ acc_pair2</code></pre></div>
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
