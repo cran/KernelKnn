@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2017-11-30" />
+<meta name="date" content="2018-01-16" />
 
 <title>binary classification using the ionosphere data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">binary classification using the ionosphere data</h1>
 <h4 class="author"><em>Lampros Mouselimis</em></h4>
-<h4 class="date"><em>2017-11-30</em></h4>
+<h4 class="date"><em>2018-01-16</em></h4>
 
 
 
@@ -104,9 +104,9 @@ y =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><
 spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) <span class="op">*</span><span class="st"> </span><span class="fl">0.75</span>))
 spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), spl_train)
 <span class="kw">str</span>(spl_train)</code></pre></div>
-<pre><code>##  int [1:263] 348 335 235 155 256 60 254 139 30 37 ...</code></pre>
+<pre><code>##  int [1:263] 219 311 186 61 305 321 295 212 26 176 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(spl_test)</code></pre></div>
-<pre><code>##  int [1:88] 6 7 9 15 19 20 27 28 33 40 ...</code></pre>
+<pre><code>##  int [1:88] 4 5 10 12 15 18 25 30 33 35 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># evaluation metric</span>
 
 acc =<span class="st"> </span><span class="cf">function</span> (y_true, preds) {
@@ -130,12 +130,12 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
                        <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST)</code></pre></div>
 <pre><code>##      class_1 class_2
-## [1,]     0.8     0.2
+## [1,]     0.2     0.8
 ## [2,]     0.0     1.0
-## [3,]     0.0     1.0
-## [4,]     0.0     1.0
+## [3,]     1.0     0.0
+## [4,]     0.2     0.8
 ## [5,]     0.0     1.0
-## [6,]     0.6     0.4</code></pre>
+## [6,]     1.0     0.0</code></pre>
 <p><br> There are two ways to use a kernel in the KernelKnn function. The <strong>first option</strong> is to choose one of the existing kernels (<em>uniform</em>, <em>triangular</em>, <em>epanechnikov</em>, <em>biweight</em>, <em>triweight</em>, <em>tricube</em>, <em>gaussian</em>, <em>cosine</em>, <em>logistic</em>, <em>silverman</em>, <em>inverse</em>, <em>gaussianSimple</em>, <em>exponential</em>). Here, I use the <em>canberra</em> metric and the <em>tricube</em> kernel because they give optimal results (according to my RandomSearchR package),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds_TEST_tric =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">10</span> , 
                             
@@ -143,13 +143,13 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_tric)</code></pre></div>
-<pre><code>##              [,1]      [,2]
-## [1,] 8.531701e-01 0.1468299
-## [2,] 2.037710e-03 0.9979623
-## [3,] 1.411019e-03 0.9985890
-## [4,] 8.727623e-02 0.9127238
-## [5,] 5.828865e-18 1.0000000
-## [6,] 8.911907e-01 0.1088093</code></pre>
+<pre><code>##              [,1]       [,2]
+## [1,] 9.285073e-01 0.07149265
+## [2,] 0.000000e+00 1.00000000
+## [3,] 1.000000e+00 0.00000000
+## [4,] 5.675324e-01 0.43246758
+## [5,] 7.912904e-18 1.00000000
+## [6,] 9.751508e-01 0.02484923</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm_kernel =<span class="st"> </span><span class="cf">function</span>(W) {
   
@@ -167,13 +167,13 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_norm)</code></pre></div>
-<pre><code>##            [,1]      [,2]
-## [1,] 0.88790391 0.1120961
-## [2,] 0.08117094 0.9188291
-## [3,] 0.08083698 0.9191630
-## [4,] 0.10061990 0.8993801
-## [5,] 0.07548378 0.9245162
-## [6,] 0.89783626 0.1021637</code></pre>
+<pre><code>##            [,1]       [,2]
+## [1,] 0.74218618 0.25781382
+## [2,] 0.00000000 1.00000000
+## [3,] 1.00000000 0.00000000
+## [4,] 0.51210096 0.48789904
+## [5,] 0.07896988 0.92103012
+## [6,] 0.90794519 0.09205481</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
