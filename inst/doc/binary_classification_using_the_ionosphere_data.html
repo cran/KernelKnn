@@ -12,14 +12,14 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2018-01-16" />
+<meta name="date" content="2019-04-14" />
 
 <title>binary classification using the ionosphere data</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -55,7 +55,29 @@ code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
 code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -70,7 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">binary classification using the ionosphere data</h1>
 <h4 class="author"><em>Lampros Mouselimis</em></h4>
-<h4 class="date"><em>2018-01-16</em></h4>
+<h4 class="date"><em>2019-04-14</em></h4>
 
 
 
@@ -104,9 +126,9 @@ y =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><
 spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) <span class="op">*</span><span class="st"> </span><span class="fl">0.75</span>))
 spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), spl_train)
 <span class="kw">str</span>(spl_train)</code></pre></div>
-<pre><code>##  int [1:263] 219 311 186 61 305 321 295 212 26 176 ...</code></pre>
+<pre><code>##  int [1:263] 249 232 33 142 127 113 314 121 307 102 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(spl_test)</code></pre></div>
-<pre><code>##  int [1:88] 4 5 10 12 15 18 25 30 33 35 ...</code></pre>
+<pre><code>##  int [1:88] 2 6 9 11 14 20 25 27 28 29 ...</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># evaluation metric</span>
 
 acc =<span class="st"> </span><span class="cf">function</span> (y_true, preds) {
@@ -130,12 +152,12 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
                        <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST)</code></pre></div>
 <pre><code>##      class_1 class_2
-## [1,]     0.2     0.8
-## [2,]     0.0     1.0
-## [3,]     1.0     0.0
-## [4,]     0.2     0.8
+## [1,]     0.0     1.0
+## [2,]     0.8     0.2
+## [3,]     0.0     1.0
+## [4,]     0.0     1.0
 ## [5,]     0.0     1.0
-## [6,]     1.0     0.0</code></pre>
+## [6,]     0.4     0.6</code></pre>
 <p><br> There are two ways to use a kernel in the KernelKnn function. The <strong>first option</strong> is to choose one of the existing kernels (<em>uniform</em>, <em>triangular</em>, <em>epanechnikov</em>, <em>biweight</em>, <em>triweight</em>, <em>tricube</em>, <em>gaussian</em>, <em>cosine</em>, <em>logistic</em>, <em>silverman</em>, <em>inverse</em>, <em>gaussianSimple</em>, <em>exponential</em>). Here, I use the <em>canberra</em> metric and the <em>tricube</em> kernel because they give optimal results (according to my RandomSearchR package),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">preds_TEST_tric =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">10</span> , 
                             
@@ -143,13 +165,13 @@ preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_tra
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_tric)</code></pre></div>
-<pre><code>##              [,1]       [,2]
-## [1,] 9.285073e-01 0.07149265
-## [2,] 0.000000e+00 1.00000000
-## [3,] 1.000000e+00 0.00000000
-## [4,] 5.675324e-01 0.43246758
-## [5,] 7.912904e-18 1.00000000
-## [6,] 9.751508e-01 0.02484923</code></pre>
+<pre><code>##             [,1]      [,2]
+## [1,] 0.020857349 0.9791427
+## [2,] 0.834451775 0.1655482
+## [3,] 0.006457516 0.9935425
+## [4,] 0.087830698 0.9121693
+## [5,] 0.437895385 0.5621046
+## [6,] 0.895138976 0.1048610</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm_kernel =<span class="st"> </span><span class="cf">function</span>(W) {
   
@@ -167,13 +189,13 @@ preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[sp
                             
                             <span class="dt">Levels =</span> <span class="kw">unique</span>(y))
 <span class="kw">head</span>(preds_TEST_norm)</code></pre></div>
-<pre><code>##            [,1]       [,2]
-## [1,] 0.74218618 0.25781382
-## [2,] 0.00000000 1.00000000
-## [3,] 1.00000000 0.00000000
-## [4,] 0.51210096 0.48789904
-## [5,] 0.07896988 0.92103012
-## [6,] 0.90794519 0.09205481</code></pre>
+<pre><code>##            [,1]      [,2]
+## [1,] 0.25852192 0.7414781
+## [2,] 0.88251556 0.1174844
+## [3,] 0.08189602 0.9181040
+## [4,] 0.10336319 0.8966368
+## [5,] 0.32803374 0.6719663
+## [6,] 0.89828037 0.1017196</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
