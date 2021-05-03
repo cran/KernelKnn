@@ -1,4 +1,4 @@
-## ---- eval = F, echo = T, warning = F, message = F, cache = T------------
+## ---- eval = F, echo = T, warning = F, message = F, cache = T-----------------
 #  
 #  # using system('wget..') on a linux OS
 #  
@@ -9,7 +9,7 @@
 #                      quote = "\"", sep = ",")
 #  
 
-## ---- eval = F, cache = T------------------------------------------------
+## ---- eval = F, cache = T-----------------------------------------------------
 #  X = mnist[, -ncol(mnist)]
 #  dim(X)
 #  
@@ -25,11 +25,11 @@
 #  ## 6903 7877 6990 7141 6824 6313 6876 7293 6825 6958
 #  
 
-## ---- eval = T, echo = F-------------------------------------------------
+## ---- eval = T, echo = F------------------------------------------------------
 
  knitr::kable(data.frame(irlba_singlular_vectors = 40, k = 8, method = 'braycurtis', kernel = 'biweight_tricube_MULT'), align = 'l')
 
-## ---- eval = F, cache = T------------------------------------------------
+## ---- eval = F, cache = T-----------------------------------------------------
 #  
 #  library(irlba)
 #  
@@ -64,7 +64,7 @@
 #  }
 #  
 
-## ---- eval = F, cache = F------------------------------------------------
+## ---- eval = F, cache = F-----------------------------------------------------
 #  
 #  acc_fit = unlist(lapply(1:length(fit$preds),
 #  
@@ -80,7 +80,7 @@
 #  ## mean accuracy using cross-validation : 0.9748571
 #  
 
-## ---- eval = F, cache = T------------------------------------------------
+## ---- eval = F, cache = T-----------------------------------------------------
 #  
 #  library(OpenImageR)
 #  
@@ -106,7 +106,7 @@
 #  #str(fit_hog)
 #  
 
-## ---- eval = F, cache = F------------------------------------------------
+## ---- eval = F, cache = F-----------------------------------------------------
 #  
 #  acc_fit_hog = unlist(lapply(1:length(fit_hog$preds),
 #  
@@ -122,7 +122,7 @@
 #  ## mean accuracy for hog-features using cross-validation : 0.984
 #  
 
-## ---- eval = F, echo = T, warning = F, message = F, cache = T------------
+## ---- eval = F, echo = T, warning = F, message = F, cache = T-----------------
 #  
 #  # using system('wget..') on a linux OS
 #  
@@ -133,7 +133,7 @@
 #                         quote = "\"", sep = ",")
 #  
 
-## ---- eval = F, cache = T------------------------------------------------
+## ---- eval = F, cache = T-----------------------------------------------------
 #  X = cifar_10[, -ncol(cifar_10)]
 #  dim(X)
 #  
@@ -149,13 +149,13 @@
 #  ## 6000 6000 6000 6000 6000 6000 6000 6000 6000 6000
 #  
 
-## ---- eval = T, echo = F-------------------------------------------------
+## ---- eval = T, echo = F------------------------------------------------------
 
  knitr::kable(data.frame(irlba_singlular_vectors = 40, k = 8, method = 'braycurtis', 
                          
                          kernel = 'biweight_tricube_MULT'), align = 'l')
 
-## ---- eval = F, cache = T------------------------------------------------
+## ---- eval = F, cache = T-----------------------------------------------------
 #  
 #  svd_irlb = irlba(as.matrix(X), nv = 40, nu = 40, verbose = F)            # irlba truncated svd
 #  
@@ -174,7 +174,7 @@
 #  # str(fit)
 #  
 
-## ---- eval = F, cache = F------------------------------------------------
+## ---- eval = F, cache = F-----------------------------------------------------
 #  
 #  acc_fit = unlist(lapply(1:length(fit$preds),
 #  
@@ -190,7 +190,7 @@
 #  ## mean accuracy using cross-validation : 0.4080167
 #  
 
-## ---- eval = F, cache = T------------------------------------------------
+## ---- eval = F, cache = T-----------------------------------------------------
 #  
 #  hog = HOG_apply(X, cells = 6, orientations = 9, rows = 32,
 #  
@@ -216,7 +216,7 @@
 #  # str(fit_hog)
 #  
 
-## ---- eval = F, cache = F------------------------------------------------
+## ---- eval = F, cache = F-----------------------------------------------------
 #  
 #  acc_fit_hog = unlist(lapply(1:length(fit_hog$preds),
 #  
@@ -232,7 +232,7 @@
 #  ## mean accuracy for hog-features using cross-validation : 0.58325
 #  
 
-## ---- eval = F, echo = F-------------------------------------------------
+## ---- eval = F, echo = F------------------------------------------------------
 #  
 #  # remove cache and mnist.zip once vignettes are built
 #  

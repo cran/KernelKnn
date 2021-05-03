@@ -1,29 +1,53 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2019-11-29" />
+<meta name="date" content="2021-05-03" />
 
 <title>Regression using the Housing data</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -33,14 +57,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -49,9 +75,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -108,6 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+
 <style type="text/css">body {
 background-color: #fff;
 margin: 1em auto;
@@ -118,9 +145,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -289,7 +313,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -304,15 +329,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Regression using the Housing data</h1>
 <h4 class="author">Lampros Mouselimis</h4>
-<h4 class="date">2019-11-29</h4>
+<h4 class="date">2021-05-03</h4>
 
 
 
 <p>The following examples illustrate the functionality of the KernelKnn package for <strong>regression</strong> tasks. I’ll make use of the <em>Housing</em> data set,</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">data</span>(Boston, <span class="dt">package =</span> <span class="st">'KernelKnn'</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">str</span>(Boston)</a></code></pre></div>
-<pre><code>## 'data.frame':    506 obs. of  14 variables:
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">data</span>(Boston, <span class="dt">package =</span> <span class="st">&#39;KernelKnn&#39;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">str</span>(Boston)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    506 obs. of  14 variables:
 ##  $ crim   : num  0.00632 0.02731 0.02729 0.03237 0.06905 ...
 ##  $ zn     : num  18 0 0 0 0 0 12.5 12.5 12.5 12.5 ...
 ##  $ indus  : num  2.31 7.07 7.07 2.18 2.18 2.18 7.87 7.87 7.87 7.87 ...
@@ -329,81 +354,81 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ##  $ medv   : num  24 21.6 34.7 33.4 36.2 28.7 22.9 27.1 16.5 18.9 ...</code></pre>
 <p><br></p>
 <p>When using an algorithm where the ouput depends on distance calculation (as is the case in k-nearest-neighbors) it is recommended to first scale the data,</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">X =<span class="st"> </span><span class="kw">scale</span>(Boston[, <span class="op">-</span><span class="kw">ncol</span>(Boston)])</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">y =<span class="st"> </span>Boston[, <span class="kw">ncol</span>(Boston)]</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co"># random split of data in train and test</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) <span class="op">*</span><span class="st"> </span><span class="fl">0.75</span>))</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), spl_train)</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="kw">str</span>(spl_train)</a></code></pre></div>
-<pre><code>##  int [1:380] 9 57 407 476 41 305 281 430 177 380 ...</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">str</span>(spl_test)</a></code></pre></div>
-<pre><code>##  int [1:126] 2 3 12 13 14 23 27 28 36 38 ...</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># evaluation metric</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">mse =<span class="st"> </span><span class="cf">function</span> (y_true, y_pred) {</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">  </a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">  out =<span class="st"> </span><span class="kw">mean</span>((y_true <span class="op">-</span><span class="st"> </span>y_pred)<span class="op">^</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">  </a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">  out</a>
-<a class="sourceLine" id="cb7-8" data-line-number="8">}</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>X =<span class="st"> </span><span class="kw">scale</span>(Boston[, <span class="op">-</span><span class="kw">ncol</span>(Boston)])</span>
+<span id="cb3-2"><a href="#cb3-2"></a>y =<span class="st"> </span>Boston[, <span class="kw">ncol</span>(Boston)]</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># random split of data in train and test</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a>spl_train =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), <span class="kw">round</span>(<span class="kw">length</span>(y) <span class="op">*</span><span class="st"> </span><span class="fl">0.75</span>))</span>
+<span id="cb3-7"><a href="#cb3-7"></a>spl_test =<span class="st"> </span><span class="kw">setdiff</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(y), spl_train)</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="kw">str</span>(spl_train)</span></code></pre></div>
+<pre><code>##  int [1:380] 411 64 274 134 28 380 17 125 247 373 ...</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">str</span>(spl_test)</span></code></pre></div>
+<pre><code>##  int [1:126] 4 12 15 18 20 24 35 37 43 47 ...</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># evaluation metric</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>mse =<span class="st"> </span><span class="cf">function</span> (y_true, y_pred) {</span>
+<span id="cb7-4"><a href="#cb7-4"></a>  </span>
+<span id="cb7-5"><a href="#cb7-5"></a>  out =<span class="st"> </span><span class="kw">mean</span>((y_true <span class="op">-</span><span class="st"> </span>y_pred)<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb7-6"><a href="#cb7-6"></a>  </span>
+<span id="cb7-7"><a href="#cb7-7"></a>  out</span>
+<span id="cb7-8"><a href="#cb7-8"></a>}</span></code></pre></div>
 <div id="the-kernelknn-function" class="section level2">
 <h2>The KernelKnn function</h2>
 <p>The KernelKnn function takes a number of arguments. To read details for each one of the arguments type ?KernelKnn::KernelKnn in the console.</p>
 <p>A simple k-nearest-neighbors can be run with weights_function = NULL (the parameter ‘regression’ should be set to TRUE for regression),</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">library</span>(KernelKnn)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">5</span> , </a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">                       </a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">                       <span class="dt">method =</span> <span class="st">'euclidean'</span>, <span class="dt">weights_function =</span> <span class="ot">NULL</span>, <span class="dt">regression =</span> T)</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="kw">str</span>(preds_TEST)</a></code></pre></div>
-<pre><code>##  num [1:126] 23.3 31.3 20.8 21.5 19.6 ...</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">library</span>(KernelKnn)</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a>preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">5</span> , </span>
+<span id="cb8-4"><a href="#cb8-4"></a>                       </span>
+<span id="cb8-5"><a href="#cb8-5"></a>                       <span class="dt">method =</span> <span class="st">&#39;euclidean&#39;</span>, <span class="dt">weights_function =</span> <span class="ot">NULL</span>, <span class="dt">regression =</span> T)</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="kw">str</span>(preds_TEST)</span></code></pre></div>
+<pre><code>##  num [1:126] 30.3 20.8 18 16.3 19 ...</code></pre>
 <p><br> Using transf_categ_cols = TRUE, categorical features can be either encoded to dummy or to numeric features depending on the number of the unique values (here I convert the ‘chas’ and ‘rad’ features to factor to apply the <em>transf_categ_cols</em> parameter)</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">apply</span>(Boston, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">length</span>(<span class="kw">unique</span>(x)))</a></code></pre></div>
-<pre><code>##    crim      zn   indus    chas     nox      rm     age     dis     rad 
-##     504      26      76       2      81     446     356     412       9 
-##     tax ptratio   black   lstat    medv 
-##      66      46     357     455     229</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">tmp_bst =<span class="st"> </span>Boston</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">tmp_bst<span class="op">$</span>chas =<span class="st"> </span><span class="kw">as.factor</span>(tmp_bst<span class="op">$</span>chas)</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">tmp_bst<span class="op">$</span>rad =<span class="st"> </span><span class="kw">as.factor</span>(tmp_bst<span class="op">$</span>rad)</a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5">preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(tmp_bst[spl_train, <span class="op">-</span><span class="kw">ncol</span>(tmp_bst)], </a>
-<a class="sourceLine" id="cb12-6" data-line-number="6">                       </a>
-<a class="sourceLine" id="cb12-7" data-line-number="7">                       <span class="dt">TEST_data =</span> tmp_bst[spl_test, <span class="op">-</span><span class="kw">ncol</span>(tmp_bst)], </a>
-<a class="sourceLine" id="cb12-8" data-line-number="8">                       </a>
-<a class="sourceLine" id="cb12-9" data-line-number="9">                       y[spl_train], <span class="dt">k =</span> <span class="dv">5</span> , <span class="dt">method =</span> <span class="st">'euclidean'</span>, </a>
-<a class="sourceLine" id="cb12-10" data-line-number="10">                       </a>
-<a class="sourceLine" id="cb12-11" data-line-number="11">                       <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> T)</a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="kw">str</span>(preds_TEST)</a></code></pre></div>
-<pre><code>##  num [1:126] 20.7 22.9 20.2 24 21 ...</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">apply</span>(Boston, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">length</span>(<span class="kw">unique</span>(x)))</span></code></pre></div>
+<pre><code>##    crim      zn   indus    chas     nox      rm     age     dis     rad     tax 
+##     504      26      76       2      81     446     356     412       9      66 
+## ptratio   black   lstat    medv 
+##      46     357     455     229</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>tmp_bst =<span class="st"> </span>Boston</span>
+<span id="cb12-2"><a href="#cb12-2"></a>tmp_bst<span class="op">$</span>chas =<span class="st"> </span><span class="kw">as.factor</span>(tmp_bst<span class="op">$</span>chas)</span>
+<span id="cb12-3"><a href="#cb12-3"></a>tmp_bst<span class="op">$</span>rad =<span class="st"> </span><span class="kw">as.factor</span>(tmp_bst<span class="op">$</span>rad)</span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a>preds_TEST =<span class="st"> </span><span class="kw">KernelKnn</span>(tmp_bst[spl_train, <span class="op">-</span><span class="kw">ncol</span>(tmp_bst)], </span>
+<span id="cb12-6"><a href="#cb12-6"></a>                       </span>
+<span id="cb12-7"><a href="#cb12-7"></a>                       <span class="dt">TEST_data =</span> tmp_bst[spl_test, <span class="op">-</span><span class="kw">ncol</span>(tmp_bst)], </span>
+<span id="cb12-8"><a href="#cb12-8"></a>                       </span>
+<span id="cb12-9"><a href="#cb12-9"></a>                       y[spl_train], <span class="dt">k =</span> <span class="dv">5</span> , <span class="dt">method =</span> <span class="st">&#39;euclidean&#39;</span>, </span>
+<span id="cb12-10"><a href="#cb12-10"></a>                       </span>
+<span id="cb12-11"><a href="#cb12-11"></a>                       <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> T)</span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="kw">str</span>(preds_TEST)</span></code></pre></div>
+<pre><code>##  num [1:126] 23.7 22.3 30.2 22.2 25.4 ...</code></pre>
 <p><br> There are two ways to use a kernel in the KernelKnn function. The <strong>first option</strong> is to choose one of the existing kernels (<em>uniform</em>, <em>triangular</em>, <em>epanechnikov</em>, <em>biweight</em>, <em>triweight</em>, <em>tricube</em>, <em>gaussian</em>, <em>cosine</em>, <em>logistic</em>, <em>silverman</em>, <em>inverse</em>, <em>gaussianSimple</em>, <em>exponential</em>). Here, I use the <em>mahalanobis</em> metric (which takes advantage of the covariance matrix of the data, but it somewhat slows down training in comparison to the other distance metrics) and the <em>biweight</em> kernel, because they give optimal results (according to my <em>RandomSearchR</em> package),</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">preds_TEST_biw =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">5</span>, </a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">                           </a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">                           <span class="dt">method =</span> <span class="st">'mahalanobis'</span>, <span class="dt">weights_function =</span> <span class="st">'biweight'</span>, </a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">                           </a>
-<a class="sourceLine" id="cb14-5" data-line-number="5">                           <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> F)</a>
-<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="kw">str</span>(preds_TEST_biw)</a></code></pre></div>
-<pre><code>##  num [1:126] 22.7 35.1 22.1 20.8 19.3 ...</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>preds_TEST_biw =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">5</span>, </span>
+<span id="cb14-2"><a href="#cb14-2"></a>                           </span>
+<span id="cb14-3"><a href="#cb14-3"></a>                           <span class="dt">method =</span> <span class="st">&#39;mahalanobis&#39;</span>, <span class="dt">weights_function =</span> <span class="st">&#39;biweight&#39;</span>, </span>
+<span id="cb14-4"><a href="#cb14-4"></a>                           </span>
+<span id="cb14-5"><a href="#cb14-5"></a>                           <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> F)</span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="kw">str</span>(preds_TEST_biw)</span></code></pre></div>
+<pre><code>##  num [1:126] 33.1 21.9 17 17.5 20.1 ...</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">norm_kernel =<span class="st"> </span><span class="cf">function</span>(W) {</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">  </a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">  W =<span class="st"> </span><span class="kw">dnorm</span>(W, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">1.0</span>)</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">  </a>
-<a class="sourceLine" id="cb16-5" data-line-number="5">  W =<span class="st"> </span>W <span class="op">/</span><span class="st"> </span><span class="kw">rowSums</span>(W)</a>
-<a class="sourceLine" id="cb16-6" data-line-number="6">  </a>
-<a class="sourceLine" id="cb16-7" data-line-number="7">  <span class="kw">return</span>(W)</a>
-<a class="sourceLine" id="cb16-8" data-line-number="8">}</a>
-<a class="sourceLine" id="cb16-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb16-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb16-11" data-line-number="11">preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">5</span>,</a>
-<a class="sourceLine" id="cb16-12" data-line-number="12">                            </a>
-<a class="sourceLine" id="cb16-13" data-line-number="13">                            <span class="dt">method =</span> <span class="st">'mahalanobis'</span>, <span class="dt">weights_function =</span> norm_kernel, </a>
-<a class="sourceLine" id="cb16-14" data-line-number="14">                            </a>
-<a class="sourceLine" id="cb16-15" data-line-number="15">                            <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> F)</a>
-<a class="sourceLine" id="cb16-16" data-line-number="16"><span class="kw">str</span>(preds_TEST_norm)</a></code></pre></div>
-<pre><code>##  num [1:126] 23.6 31.1 22.3 22.1 20.3 ...</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>norm_kernel =<span class="st"> </span><span class="cf">function</span>(W) {</span>
+<span id="cb16-2"><a href="#cb16-2"></a>  </span>
+<span id="cb16-3"><a href="#cb16-3"></a>  W =<span class="st"> </span><span class="kw">dnorm</span>(W, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="fl">1.0</span>)</span>
+<span id="cb16-4"><a href="#cb16-4"></a>  </span>
+<span id="cb16-5"><a href="#cb16-5"></a>  W =<span class="st"> </span>W <span class="op">/</span><span class="st"> </span><span class="kw">rowSums</span>(W)</span>
+<span id="cb16-6"><a href="#cb16-6"></a>  </span>
+<span id="cb16-7"><a href="#cb16-7"></a>  <span class="kw">return</span>(W)</span>
+<span id="cb16-8"><a href="#cb16-8"></a>}</span>
+<span id="cb16-9"><a href="#cb16-9"></a></span>
+<span id="cb16-10"><a href="#cb16-10"></a></span>
+<span id="cb16-11"><a href="#cb16-11"></a>preds_TEST_norm =<span class="st"> </span><span class="kw">KernelKnn</span>(X[spl_train, ], <span class="dt">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="dt">k =</span> <span class="dv">5</span>,</span>
+<span id="cb16-12"><a href="#cb16-12"></a>                            </span>
+<span id="cb16-13"><a href="#cb16-13"></a>                            <span class="dt">method =</span> <span class="st">&#39;mahalanobis&#39;</span>, <span class="dt">weights_function =</span> norm_kernel, </span>
+<span id="cb16-14"><a href="#cb16-14"></a>                            </span>
+<span id="cb16-15"><a href="#cb16-15"></a>                            <span class="dt">regression =</span> T, <span class="dt">transf_categ_cols =</span> F)</span>
+<span id="cb16-16"><a href="#cb16-16"></a><span class="kw">str</span>(preds_TEST_norm)</span></code></pre></div>
+<pre><code>##  num [1:126] 30.3 22.3 17 16.3 19.9 ...</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
@@ -433,47 +458,47 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="the-kernelknncv-function" class="section level2">
 <h2>The KernelKnnCV function</h2>
 <p>I’ll use the <em>KernelKnnCV</em> function to calculate the mean-squared-error using 3-fold cross-validation for the previous mentioned parameter pairs,</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">fit_cv_pair1 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">9</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">'mahalanobis'</span>, </a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">                           </a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">                           <span class="dt">weights_function =</span> <span class="st">'triweight'</span>, <span class="dt">regression =</span> T, </a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">                           </a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">                           <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">str</span>(fit_cv_pair1)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>fit_cv_pair1 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">9</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">&#39;mahalanobis&#39;</span>, </span>
+<span id="cb18-2"><a href="#cb18-2"></a>                           </span>
+<span id="cb18-3"><a href="#cb18-3"></a>                           <span class="dt">weights_function =</span> <span class="st">&#39;triweight&#39;</span>, <span class="dt">regression =</span> T, </span>
+<span id="cb18-4"><a href="#cb18-4"></a>                           </span>
+<span id="cb18-5"><a href="#cb18-5"></a>                           <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">str</span>(fit_cv_pair1)</span></code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 3
-##   ..$ : num [1:168] 24.1 32.4 17.6 16.6 19.4 ...
-##   ..$ : num [1:169] 30 21.8 21.5 20.5 22.6 ...
-##   ..$ : num [1:169] 23.3 29.7 30.8 20.4 22.6 ...
+##   ..$ : num [1:169] 26.3 26 28.3 21.8 21.4 ...
+##   ..$ : num [1:168] 19.6 17.4 15.9 17.4 14.3 ...
+##   ..$ : num [1:169] 23.2 22.7 29.8 22.7 22.9 ...
 ##  $ folds:List of 3
-##   ..$ fold_1: int [1:168] 2 5 8 9 14 23 24 29 34 35 ...
-##   ..$ fold_2: int [1:169] 6 12 13 16 17 19 20 22 30 36 ...
-##   ..$ fold_3: int [1:169] 1 3 4 7 10 11 15 18 21 25 ...</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">fit_cv_pair2 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">3</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">'canberra'</span>,</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">                           </a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">                           <span class="dt">weights_function =</span> <span class="st">'cosine'</span>, <span class="dt">regression =</span> T, </a>
-<a class="sourceLine" id="cb21-4" data-line-number="4">                           </a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">                           <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">str</span>(fit_cv_pair2)</a></code></pre></div>
+##   ..$ fold_1: int [1:169] 3 4 5 12 13 19 20 21 25 26 ...
+##   ..$ fold_2: int [1:168] 7 8 9 18 24 27 29 36 40 41 ...
+##   ..$ fold_3: int [1:169] 1 2 6 10 11 14 15 16 17 22 ...</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>fit_cv_pair2 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">3</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">&#39;canberra&#39;</span>,</span>
+<span id="cb21-2"><a href="#cb21-2"></a>                           </span>
+<span id="cb21-3"><a href="#cb21-3"></a>                           <span class="dt">weights_function =</span> <span class="st">&#39;cosine&#39;</span>, <span class="dt">regression =</span> T, </span>
+<span id="cb21-4"><a href="#cb21-4"></a>                           </span>
+<span id="cb21-5"><a href="#cb21-5"></a>                           <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">str</span>(fit_cv_pair2)</span></code></pre></div>
 <p><br></p>
 <p>Each cross-validated object returns a list of length 2 ( the first sublist includes the predictions for each fold whereas the second gives the indices of the folds)</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">mse_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair1<span class="op">$</span>preds), </a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">                          </a>
-<a class="sourceLine" id="cb23-3" data-line-number="3">                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair1<span class="op">$</span>folds[[x]]], </a>
-<a class="sourceLine" id="cb23-4" data-line-number="4">                                          </a>
-<a class="sourceLine" id="cb23-5" data-line-number="5">                                          fit_cv_pair1<span class="op">$</span>preds[[x]])))</a>
-<a class="sourceLine" id="cb23-6" data-line-number="6">mse_pair1</a></code></pre></div>
-<pre><code>## [1] 18.17392 18.29160 11.01078</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">cat</span>(<span class="st">'mse for params_pair1 is :'</span>, <span class="kw">mean</span>(mse_pair1), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
-<pre><code>## mse for params_pair1 is : 15.82543</code></pre>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">mse_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair2<span class="op">$</span>preds), </a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">                          </a>
-<a class="sourceLine" id="cb27-3" data-line-number="3">                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair2<span class="op">$</span>folds[[x]]], </a>
-<a class="sourceLine" id="cb27-4" data-line-number="4">                                          </a>
-<a class="sourceLine" id="cb27-5" data-line-number="5">                                          fit_cv_pair2<span class="op">$</span>preds[[x]])))</a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">mse_pair2</a></code></pre></div>
-<pre><code>## [1] 26.84027 22.75759 18.53496</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">cat</span>(<span class="st">'mse for params_pair2 is :'</span>, <span class="kw">mean</span>(mse_pair2), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
-<pre><code>## mse for params_pair2 is : 22.71094</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>mse_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair1<span class="op">$</span>preds), </span>
+<span id="cb23-2"><a href="#cb23-2"></a>                          </span>
+<span id="cb23-3"><a href="#cb23-3"></a>                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair1<span class="op">$</span>folds[[x]]], </span>
+<span id="cb23-4"><a href="#cb23-4"></a>                                          </span>
+<span id="cb23-5"><a href="#cb23-5"></a>                                          fit_cv_pair1<span class="op">$</span>preds[[x]])))</span>
+<span id="cb23-6"><a href="#cb23-6"></a>mse_pair1</span></code></pre></div>
+<pre><code>## [1] 19.03225 19.47981 19.41959</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="kw">cat</span>(<span class="st">&#39;mse for params_pair1 is :&#39;</span>, <span class="kw">mean</span>(mse_pair1), <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## mse for params_pair1 is : 19.31055</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>mse_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair2<span class="op">$</span>preds), </span>
+<span id="cb27-2"><a href="#cb27-2"></a>                          </span>
+<span id="cb27-3"><a href="#cb27-3"></a>                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair2<span class="op">$</span>folds[[x]]], </span>
+<span id="cb27-4"><a href="#cb27-4"></a>                                          </span>
+<span id="cb27-5"><a href="#cb27-5"></a>                                          fit_cv_pair2<span class="op">$</span>preds[[x]])))</span>
+<span id="cb27-6"><a href="#cb27-6"></a>mse_pair2</span></code></pre></div>
+<pre><code>## [1] 17.83355 29.86579 28.65615</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">cat</span>(<span class="st">&#39;mse for params_pair2 is :&#39;</span>, <span class="kw">mean</span>(mse_pair2), <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## mse for params_pair2 is : 25.45183</code></pre>
 <p><br></p>
 </div>
 <div id="adding-or-multiplying-kernels" class="section level2">
@@ -502,55 +527,55 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tbody>
 </table>
 <p><br></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">fit_cv_pair1 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">19</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">'mahalanobis'</span>, </a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">                           </a>
-<a class="sourceLine" id="cb31-3" data-line-number="3">                           <span class="dt">weights_function =</span> <span class="st">'triangular_triweight_MULT'</span>, </a>
-<a class="sourceLine" id="cb31-4" data-line-number="4">                           </a>
-<a class="sourceLine" id="cb31-5" data-line-number="5">                           <span class="dt">regression =</span> T, <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">str</span>(fit_cv_pair1)</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>fit_cv_pair1 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">19</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">&#39;mahalanobis&#39;</span>, </span>
+<span id="cb31-2"><a href="#cb31-2"></a>                           </span>
+<span id="cb31-3"><a href="#cb31-3"></a>                           <span class="dt">weights_function =</span> <span class="st">&#39;triangular_triweight_MULT&#39;</span>, </span>
+<span id="cb31-4"><a href="#cb31-4"></a>                           </span>
+<span id="cb31-5"><a href="#cb31-5"></a>                           <span class="dt">regression =</span> T, <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="kw">str</span>(fit_cv_pair1)</span></code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 3
-##   ..$ : num [1:168] 24.3 32.4 17.8 17.1 19.5 ...
-##   ..$ : num [1:169] 28.6 21.5 21.9 20.4 22.2 ...
-##   ..$ : num [1:169] 23.2 27.6 31.1 20.7 22.4 ...
+##   ..$ : num [1:169] 26.4 26 27.8 21.5 21.8 ...
+##   ..$ : num [1:168] 19.7 17.6 16.4 16.7 14.6 ...
+##   ..$ : num [1:169] 23.1 22.7 29 22.3 22.3 ...
 ##  $ folds:List of 3
-##   ..$ fold_1: int [1:168] 2 5 8 9 14 23 24 29 34 35 ...
-##   ..$ fold_2: int [1:169] 6 12 13 16 17 19 20 22 30 36 ...
-##   ..$ fold_3: int [1:169] 1 3 4 7 10 11 15 18 21 25 ...</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">fit_cv_pair2 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">18</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">'mahalanobis'</span>, </a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">                           </a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">                           <span class="dt">weights_function =</span> <span class="st">'biweight_triweight_gaussian_MULT'</span>, </a>
-<a class="sourceLine" id="cb34-4" data-line-number="4">                           </a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">                           <span class="dt">regression =</span> T, <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">str</span>(fit_cv_pair2)</a></code></pre></div>
+##   ..$ fold_1: int [1:169] 3 4 5 12 13 19 20 21 25 26 ...
+##   ..$ fold_2: int [1:168] 7 8 9 18 24 27 29 36 40 41 ...
+##   ..$ fold_3: int [1:169] 1 2 6 10 11 14 15 16 17 22 ...</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>fit_cv_pair2 =<span class="st"> </span><span class="kw">KernelKnnCV</span>(X, y, <span class="dt">k =</span> <span class="dv">18</span>, <span class="dt">folds =</span> <span class="dv">3</span>, <span class="dt">method =</span> <span class="st">&#39;mahalanobis&#39;</span>, </span>
+<span id="cb34-2"><a href="#cb34-2"></a>                           </span>
+<span id="cb34-3"><a href="#cb34-3"></a>                           <span class="dt">weights_function =</span> <span class="st">&#39;biweight_triweight_gaussian_MULT&#39;</span>, </span>
+<span id="cb34-4"><a href="#cb34-4"></a>                           </span>
+<span id="cb34-5"><a href="#cb34-5"></a>                           <span class="dt">regression =</span> T, <span class="dt">threads =</span> <span class="dv">5</span>, <span class="dt">seed_num =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="kw">str</span>(fit_cv_pair2)</span></code></pre></div>
 <pre><code>## List of 2
 ##  $ preds:List of 3
-##   ..$ : num [1:168] 24.2 32.5 17.8 17.1 19.4 ...
-##   ..$ : num [1:169] 28.9 21.7 21.8 20.4 22.1 ...
-##   ..$ : num [1:169] 23.3 27.7 31.2 20.6 22.4 ...
+##   ..$ : num [1:169] 26.2 26 28.1 21.7 21.7 ...
+##   ..$ : num [1:168] 19.7 17.6 16.4 16.7 14.6 ...
+##   ..$ : num [1:169] 23.1 22.8 29.2 22.4 22.2 ...
 ##  $ folds:List of 3
-##   ..$ fold_1: int [1:168] 2 5 8 9 14 23 24 29 34 35 ...
-##   ..$ fold_2: int [1:169] 6 12 13 16 17 19 20 22 30 36 ...
-##   ..$ fold_3: int [1:169] 1 3 4 7 10 11 15 18 21 25 ...</code></pre>
+##   ..$ fold_1: int [1:169] 3 4 5 12 13 19 20 21 25 26 ...
+##   ..$ fold_2: int [1:168] 7 8 9 18 24 27 29 36 40 41 ...
+##   ..$ fold_3: int [1:169] 1 2 6 10 11 14 15 16 17 22 ...</code></pre>
 <p><br></p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">mse_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair1<span class="op">$</span>preds), </a>
-<a class="sourceLine" id="cb37-2" data-line-number="2">                          </a>
-<a class="sourceLine" id="cb37-3" data-line-number="3">                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair1<span class="op">$</span>folds[[x]]], </a>
-<a class="sourceLine" id="cb37-4" data-line-number="4">                                          </a>
-<a class="sourceLine" id="cb37-5" data-line-number="5">                                          fit_cv_pair1<span class="op">$</span>preds[[x]])))</a>
-<a class="sourceLine" id="cb37-6" data-line-number="6">mse_pair1</a></code></pre></div>
-<pre><code>## [1] 18.73885 18.64990 11.21641</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="kw">cat</span>(<span class="st">'mse for params_pair1 is :'</span>, <span class="kw">mean</span>(mse_pair1), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
-<pre><code>## mse for params_pair1 is : 16.20172</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">mse_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair2<span class="op">$</span>preds), </a>
-<a class="sourceLine" id="cb41-2" data-line-number="2">                          </a>
-<a class="sourceLine" id="cb41-3" data-line-number="3">                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair2<span class="op">$</span>folds[[x]]], </a>
-<a class="sourceLine" id="cb41-4" data-line-number="4">                                          </a>
-<a class="sourceLine" id="cb41-5" data-line-number="5">                                          fit_cv_pair2<span class="op">$</span>preds[[x]])))</a>
-<a class="sourceLine" id="cb41-6" data-line-number="6">mse_pair2</a></code></pre></div>
-<pre><code>## [1] 19.12602 18.63044 11.21680</code></pre>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="kw">cat</span>(<span class="st">'mse for params_pair2 is :'</span>, <span class="kw">mean</span>(mse_pair2), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
-<pre><code>## mse for params_pair2 is : 16.32442</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>mse_pair1 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair1<span class="op">$</span>preds), </span>
+<span id="cb37-2"><a href="#cb37-2"></a>                          </span>
+<span id="cb37-3"><a href="#cb37-3"></a>                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair1<span class="op">$</span>folds[[x]]], </span>
+<span id="cb37-4"><a href="#cb37-4"></a>                                          </span>
+<span id="cb37-5"><a href="#cb37-5"></a>                                          fit_cv_pair1<span class="op">$</span>preds[[x]])))</span>
+<span id="cb37-6"><a href="#cb37-6"></a>mse_pair1</span></code></pre></div>
+<pre><code>## [1] 19.18593 19.42827 17.33437</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="kw">cat</span>(<span class="st">&#39;mse for params_pair1 is :&#39;</span>, <span class="kw">mean</span>(mse_pair1), <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## mse for params_pair1 is : 18.64952</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>mse_pair2 =<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(fit_cv_pair2<span class="op">$</span>preds), </span>
+<span id="cb41-2"><a href="#cb41-2"></a>                          </span>
+<span id="cb41-3"><a href="#cb41-3"></a>                          <span class="cf">function</span>(x) <span class="kw">mse</span>(y[fit_cv_pair2<span class="op">$</span>folds[[x]]], </span>
+<span id="cb41-4"><a href="#cb41-4"></a>                                          </span>
+<span id="cb41-5"><a href="#cb41-5"></a>                                          fit_cv_pair2<span class="op">$</span>preds[[x]])))</span>
+<span id="cb41-6"><a href="#cb41-6"></a>mse_pair2</span></code></pre></div>
+<pre><code>## [1] 19.20290 19.31054 17.56264</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="kw">cat</span>(<span class="st">&#39;mse for params_pair2 is :&#39;</span>, <span class="kw">mean</span>(mse_pair2), <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## mse for params_pair2 is : 18.69202</code></pre>
 <p><br></p>
 </div>
 

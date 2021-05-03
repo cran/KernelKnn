@@ -1,4 +1,4 @@
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 data(ionosphere, package = 'KernelKnn')
 
@@ -8,13 +8,13 @@ apply(ionosphere, 2, function(x) length(unique(x)))
 
 ionosphere = ionosphere[, -2]
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 # recommended is to scale the data
 
 X = scale(ionosphere[, -ncol(ionosphere)])
 y = ionosphere[, ncol(ionosphere)]
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 # labels should be numeric and begin from 1:Inf
 
@@ -40,7 +40,7 @@ acc = function (y_true, preds) {
 }
 
 
-## ---- eval=T, warning = FALSE, message = FALSE---------------------------
+## ---- eval=T, warning = FALSE, message = FALSE--------------------------------
 
 library(KernelKnn)
 
@@ -52,7 +52,7 @@ preds_TEST = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_train], 
 head(preds_TEST)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 
 preds_TEST_tric = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_train], k = 10 , 
@@ -63,7 +63,7 @@ preds_TEST_tric = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_tra
 head(preds_TEST_tric)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 
 norm_kernel = function(W) {
@@ -84,11 +84,11 @@ preds_TEST_norm = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_tra
 head(preds_TEST_norm)
 
 
-## ---- eval = T, echo = F-------------------------------------------------
+## ---- eval = T, echo = F------------------------------------------------------
 
  knitr::kable(data.frame(k = c(10,9), method = c('canberra', 'canberra'), kernel = c('tricube', 'epanechnikov')))
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 
 fit_cv_pair1 = KernelKnnCV(X, y, k = 10 , folds = 5, method = 'canberra', 
                            
@@ -96,21 +96,21 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 10 , folds = 5, method = 'canberra',
                            
                            Levels = unique(y), threads = 5, seed_num = 5)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair1)
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 fit_cv_pair2 = KernelKnnCV(X, y, k = 9 , folds = 5,method = 'canberra',
                            
                            weights_function = 'epanechnikov', regression = F,
                            
                            Levels = unique(y), threads = 5, seed_num = 5)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair2)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 acc_pair1 = unlist(lapply(1:length(fit_cv_pair1$preds), 
                           
                           function(x) acc(y[fit_cv_pair1$folds[[x]]], 
@@ -130,11 +130,11 @@ acc_pair2
 cat('accuracy for params_pair2 is :', mean(acc_pair2), '\n')
 
 
-## ---- eval = T, echo = F-------------------------------------------------
+## ---- eval = T, echo = F------------------------------------------------------
 
  knitr::kable(data.frame(k = c(16,5), method = c('canberra', 'canberra'), kernel = c('biweight_triweight_gaussian_MULT', 'triangular_triweight_MULT')))
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 
 fit_cv_pair1 = KernelKnnCV(X, y, k = 16, folds = 5, method = 'canberra', 
                            
@@ -144,10 +144,10 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 16, folds = 5, method = 'canberra',
                            
                            seed_num = 5)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair1)
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 
 fit_cv_pair2 = KernelKnnCV(X, y, k = 5, folds = 5, method = 'canberra', 
                            
@@ -158,11 +158,11 @@ fit_cv_pair2 = KernelKnnCV(X, y, k = 5, folds = 5, method = 'canberra',
                            seed_num = 5)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair2)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 acc_pair1 = unlist(lapply(1:length(fit_cv_pair1$preds), 
                           
                           function(x) acc(y[fit_cv_pair1$folds[[x]]], 

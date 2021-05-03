@@ -1,11 +1,11 @@
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 data(Boston, package = 'KernelKnn')
 
 str(Boston)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 X = scale(Boston[, -ncol(Boston)])
 y = Boston[, ncol(Boston)]
 
@@ -27,7 +27,7 @@ mse = function (y_true, y_pred) {
 }
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 library(KernelKnn)
 
@@ -37,7 +37,7 @@ preds_TEST = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_train], 
 str(preds_TEST)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 
 apply(Boston, 2, function(x) length(unique(x)))
@@ -57,7 +57,7 @@ preds_TEST = KernelKnn(tmp_bst[spl_train, -ncol(tmp_bst)],
 str(preds_TEST)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 
 preds_TEST_biw = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_train], k = 5, 
@@ -68,7 +68,7 @@ preds_TEST_biw = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_trai
 str(preds_TEST_biw)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 
 
 norm_kernel = function(W) {
@@ -89,11 +89,11 @@ preds_TEST_norm = KernelKnn(X[spl_train, ], TEST_data = X[spl_test, ], y[spl_tra
 str(preds_TEST_norm)
 
 
-## ---- eval = T, echo = F-------------------------------------------------
+## ---- eval = T, echo = F------------------------------------------------------
 
  knitr::kable(data.frame(k = c(9,3), method = c('mahalanobis', 'canberra'), kernel = c('triweight', 'cosine')))
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 
 fit_cv_pair1 = KernelKnnCV(X, y, k = 9, folds = 3, method = 'mahalanobis', 
                            
@@ -101,21 +101,21 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 9, folds = 3, method = 'mahalanobis',
                            
                            threads = 5, seed_num = 3)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair1)
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 fit_cv_pair2 = KernelKnnCV(X, y, k = 3, folds = 3, method = 'canberra',
                            
                            weights_function = 'cosine', regression = T, 
                            
                            threads = 5, seed_num = 3)
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 str(fit_cv_pair2)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 mse_pair1 = unlist(lapply(1:length(fit_cv_pair1$preds), 
                           
                           function(x) mse(y[fit_cv_pair1$folds[[x]]], 
@@ -135,11 +135,11 @@ mse_pair2
 cat('mse for params_pair2 is :', mean(mse_pair2), '\n')
 
 
-## ---- eval = T, echo = F-------------------------------------------------
+## ---- eval = T, echo = F------------------------------------------------------
 
  knitr::kable(data.frame(k = c(19,18), method = c('mahalanobis', 'mahalanobis'), kernel = c('triangular_triweight_MULT', 'biweight_triweight_gaussian_MULT')))
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 
 fit_cv_pair1 = KernelKnnCV(X, y, k = 19, folds = 3, method = 'mahalanobis', 
                            
@@ -147,21 +147,21 @@ fit_cv_pair1 = KernelKnnCV(X, y, k = 19, folds = 3, method = 'mahalanobis',
                            
                            regression = T, threads = 5, seed_num = 3)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair1)
 
-## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'---------
+## ---- eval=T, warning = FALSE, message = FALSE, results = 'hide'--------------
 fit_cv_pair2 = KernelKnnCV(X, y, k = 18, folds = 3, method = 'mahalanobis', 
                            
                            weights_function = 'biweight_triweight_gaussian_MULT', 
                            
                            regression = T, threads = 5, seed_num = 3)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 str(fit_cv_pair2)
 
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 mse_pair1 = unlist(lapply(1:length(fit_cv_pair1$preds), 
                           
                           function(x) mse(y[fit_cv_pair1$folds[[x]]], 
