@@ -1,4 +1,9 @@
 
+## KernelKnn 1.1.2
+
+* I've fixed an error in the *CITATION* file
+
+
 ## KernelKnn 1.1.1
 
 * I've added the *CITATION* file in the *inst* directory

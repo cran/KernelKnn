@@ -1,4 +1,4 @@
-citHeader("Please cite both the package and the original articles / software in your publications:")
+citHeader("Please cite the package in your publications:")
 
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
