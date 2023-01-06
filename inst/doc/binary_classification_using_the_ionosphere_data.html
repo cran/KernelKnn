@@ -12,7 +12,7 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2021-10-29" />
+<meta name="date" content="2023-01-06" />
 
 <title>binary classification using the ionosphere data</title>
 
@@ -26,6 +26,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -109,13 +110,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -141,7 +149,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">binary classification using the ionosphere data</h1>
 <h4 class="author">Lampros Mouselimis</h4>
-<h4 class="date">2021-10-29</h4>
+<h4 class="date">2023-01-06</h4>
 
 
 
@@ -175,9 +183,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>spl_train <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y), <span class="fu">round</span>(<span class="fu">length</span>(y) <span class="sc">*</span> <span class="fl">0.75</span>))</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>spl_test <span class="ot">=</span> <span class="fu">setdiff</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y), spl_train)</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(spl_train)</span></code></pre></div>
-<pre><code>##  int [1:263] 101 215 229 143 125 272 169 73 301 90 ...</code></pre>
+<pre><code>##  int [1:263] 7 235 347 99 199 21 51 228 268 198 ...</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(spl_test)</span></code></pre></div>
-<pre><code>##  int [1:88] 1 6 10 13 20 23 24 34 37 39 ...</code></pre>
+<pre><code>##  int [1:88] 1 5 6 10 11 15 18 24 33 37 ...</code></pre>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluation metric</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>acc <span class="ot">=</span> <span class="cf">function</span> (y_true, preds) {</span>
@@ -201,11 +209,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">Levels =</span> <span class="fu">unique</span>(y))</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(preds_TEST)</span></code></pre></div>
 <pre><code>##      class_1 class_2
-## [1,]     0.0     1.0
-## [2,]     0.8     0.2
+## [1,]     0.2     0.8
+## [2,]     0.2     0.8
 ## [3,]     0.8     0.2
-## [4,]     0.0     1.0
-## [5,]     0.4     0.6
+## [4,]     1.0     0.0
+## [5,]     0.0     1.0
 ## [6,]     0.0     1.0</code></pre>
 <p><br> There are two ways to use a kernel in the KernelKnn function. The <strong>first option</strong> is to choose one of the existing kernels (<em>uniform</em>, <em>triangular</em>, <em>epanechnikov</em>, <em>biweight</em>, <em>triweight</em>, <em>tricube</em>, <em>gaussian</em>, <em>cosine</em>, <em>logistic</em>, <em>silverman</em>, <em>inverse</em>, <em>gaussianSimple</em>, <em>exponential</em>). Here, I use the <em>canberra</em> metric and the <em>tricube</em> kernel because they give optimal results (according to my RandomSearchR package),</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>preds_TEST_tric <span class="ot">=</span> <span class="fu">KernelKnn</span>(X[spl_train, ], <span class="at">TEST_data =</span> X[spl_test, ], y[spl_train], <span class="at">k =</span> <span class="dv">10</span> , </span>
@@ -214,13 +222,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                            </span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Levels =</span> <span class="fu">unique</span>(y))</span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(preds_TEST_tric)</span></code></pre></div>
-<pre><code>##        class_1    class_2
-## [1,] 0.0000000 1.00000000
-## [2,] 0.8557499 0.14425013
-## [3,] 0.7974342 0.20256583
-## [4,] 0.0000000 1.00000000
-## [5,] 0.9627955 0.03720446
-## [6,] 0.0000000 1.00000000</code></pre>
+<pre><code>##         class_1   class_2
+## [1,] 0.00000000 1.0000000
+## [2,] 0.00000000 1.0000000
+## [3,] 0.85317013 0.1468299
+## [4,] 0.81814011 0.1818599
+## [5,] 0.03280939 0.9671906
+## [6,] 0.17344683 0.8265532</code></pre>
 <p><br> The <strong>second option</strong> is to give a self defined kernel function. Here, I’ll pick the density function of the normal distribution with mean = 0.0 and standard deviation = 1.0 (the data are scaled to have mean zero and unit variance),</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>norm_kernel <span class="ot">=</span> <span class="cf">function</span>(W) {</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -238,13 +246,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                            </span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                            <span class="at">Levels =</span> <span class="fu">unique</span>(y))</span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(preds_TEST_norm)</span></code></pre></div>
-<pre><code>##        class_1    class_2
-## [1,] 0.0000000 1.00000000
-## [2,] 0.8882279 0.11177207
-## [3,] 0.8817386 0.11826139
-## [4,] 0.0000000 1.00000000
-## [5,] 0.9076309 0.09236906
-## [6,] 0.0000000 1.00000000</code></pre>
+<pre><code>##         class_1   class_2
+## [1,] 0.00000000 1.0000000
+## [2,] 0.00000000 1.0000000
+## [3,] 0.88790391 0.1120961
+## [4,] 0.88327689 0.1167231
+## [5,] 0.09243057 0.9075694
+## [6,] 0.11494141 0.8850586</code></pre>
 <p><br></p>
 <p>The computations can be speed up by using the parameter <strong>threads</strong> (multiple cores can be run in parallel). There is also the option to exclude <strong>extrema</strong> (minimum and maximum distances) during the calculation of the k-nearest-neighbor distances using extrema = TRUE. The <em>bandwidth</em> of the existing kernels can be tuned using the <strong>h</strong> parameter. <br></p>
 <p>K-nearest-neigbor calculations in the KernelKnn function can be accomplished using the following distance metrics : <em>euclidean</em>, <em>manhattan</em>, <em>chebyshev</em>, <em>canberra</em>, <em>braycurtis</em>, <em>minkowski</em> (by default the order ‘p’ of the minkowski parameter equals k), <em>hamming</em>, <em>mahalanobis</em>, <em>pearson_correlation</em>, <em>simple_matching_coefficient</em>, <em>jaccard_coefficient</em> and <em>Rao_coefficient</em>. The last four are similarity measures and are appropriate for binary data [0,1]. <br></p>
