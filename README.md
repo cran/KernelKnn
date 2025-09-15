@@ -1,5 +1,4 @@
 
-
 ## KernelKnn
 <br>
 
@@ -123,8 +122,8 @@ If you use the **KernelKnn** R package in your paper or research please cite [ht
 @Manual{,
   title = {{KernelKnn}: Kernel k Nearest Neighbors},
   author = {Lampros Mouselimis},
-  year = {2021},
-  note = {R package version 1.1.5},
+  year = {2025},
+  note = {R package version 1.1.6},
   url = {https://CRAN.R-project.org/package=KernelKnn},
 }
 ```
